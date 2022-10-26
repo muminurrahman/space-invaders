@@ -4,12 +4,13 @@ class Laser {
     this.y = 0;
     this.w = 5;
     this.h = 20;
+    this.r = 10;
     this.velocity = velocity;
     this.col = col;
 
     this.render = function () {
       fill(this.col);
-      rect(this.x, this.y, this.w, this.h);
+      rect(this.x, this.y, this.w, this.h, this.r);
     }
 
     this.move = function () {

@@ -4,12 +4,13 @@ class Alien {
     this.y = y;
     this.w = w;
     this.h = h;
+    this.r = 15;
     this.velocity = velocity;
     this.col = col;
 
     this.render = function () {
       fill(this.col);
-      rect(this.x, this.y, this.w, this.h);
+      rect(this.x, this.y, this.w, this.h, this.r);
     }
 
     this.move = function () {

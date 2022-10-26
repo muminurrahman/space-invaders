@@ -2,14 +2,15 @@ class Canon {
   constructor() {
     this.w = 50;
     this.h = 20;
+    this.r = 4;
     this.x = width / 2;
     this.y = height - this.h;
-    this.col = 'lime';
+    this.col = color("lime");
 
     this.render = function () {
       fill(this.col);
       triangle(this.x + 10, this.y, this.x, this.y - 20, this.x - 10, this.y);
-      rect(this.x, this.y, this.w, this.h);
+      rect(this.x, this.y, this.w, this.h, this.r);
     }
 
     /* Allows ship to move & sets boundaries */
