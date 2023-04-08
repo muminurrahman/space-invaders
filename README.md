@@ -1,5 +1,5 @@
 # space-invaders
-Recreated the classic retro game Space Invaders videogame for a university project.
+Recreated the retro videogame Space Invaders for a university project.
 
 Keyboard controls:
 

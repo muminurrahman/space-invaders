@@ -1,10 +1,10 @@
-class Canon {
+class Cannon {
   constructor() {
     this.w = 50;
-    this.h = 20;
-    this.r = 4;
+    this.h = this.w * 0.40;
     this.x = width / 2;
     this.y = height - this.h;
+    this.r = this.h / 4;
     this.col = color("lime");
 
     this.render = function () {

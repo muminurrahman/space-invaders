@@ -1,33 +1,34 @@
 "use strict"
 
-let player, stars, redd;
+let player, stars, ufo;
 let pl, el; // Player/enemy lasers'
-let enemies = [],
-  cols = 11,
-  rows = 5,
-  total; // Total number of enemies
-let state = titleScreen;
+let enemies = [];
+let rows, cols, total; // Total number of enemies
+let state;
 let edge; // Left/right side of window
 let x = 1;
 let sounds = ["sounds/explosion.wav", "sounds/invaderkilled.wav", "sounds/shoot.wav"];
-
+let titleScreen, winScreen, loseScreen;
 
 function preload() {
   // Loads all sounds at once
-  sounds = sounds.map(function(snd) {
-    return loadSound(snd);
+  sounds = sounds.map(function (sound) {
+    return loadSound(sound);
   });
 }
 
 function setup() {
   createCanvas(800, 600);
-  noCursor();
-  noStroke();
   textAlign(CENTER);
   rectMode(CENTER);
-    
-  stars = new Starfield();
-  stars.createStars(400);
+  noCursor();
+  noStroke();
+
+  titleScreen = gameScreen("lime", "SPACE INVADERS");
+  winScreen = gameScreen("lime", "YOU WIN", "re");
+  loseScreen = gameScreen("red", "GAME OVER", "re");
+
+  state = titleScreen;
 }
 
 function draw() {
@@ -37,29 +38,49 @@ function draw() {
 
 function keyPressed() {
   if (keyCode === ENTER && state !== playScreen) {
+    reset();
     state = playScreen;
+  }
+}
 
-    player = new Canon();
-    redd = new Alien(-1000, 20, 50, 20, 2.5, "red");
+function reset() {
+  stars = new Starfield();
+  stars.generateStars();
 
-    // Creates an array of enemies
-    for (let i = 0; i < cols; i++) {
-      enemies[i] = [];
-      for (let j = 0; j < rows; j++) {
-        enemies[i][j] = new Alien(i * 60 + 40, j * 60 + 40, 35, 30, 1, "white");
-      }
+  player = new Cannon();
+  ufo = new Alien(-1000, 20, 50, 20, 2.5, "red");
+
+  cols = 11;
+  rows = 5;
+
+  // Creates an array of enemies
+  for (let i = 0; i < cols; i++) {
+    enemies[i] = [];
+    for (let j = 0; j < rows; j++) {
+      enemies[i][j] = new Alien(i * 60 + 40, j * 60 + 40, 35, 30, 1, "white");
     }
+  }
 
-    // Both player & enemies can use laser objects
-    pl = new Laser(12, player.col);
-    el = new Laser(-3, "white");
+  total = rows * cols; // Resets total
 
-    total = rows * cols; // Resets total
+  // Both player & enemies can use laser objects
+  pl = new Laser(12, player.col);
+  el = new Laser(-3, "white");
+}
+
+function gameScreen(col, title, str="") {
+  return function () {
+    textSize(40);
+    fill(col);
+    text(title, width / 2, height / 2);
+    textSize(25);
+    fill("white");
+    text("Press ENTER to " + str + "start", width / 2, height / 2 + 40);
   }
 }
 
 function playScreen() {
-  stars.render(1.5);
+  stars.render();
 
   pl.render();
   pl.move();
@@ -74,18 +95,18 @@ function playScreen() {
   if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) player.move(5);
   if ((keyIsDown(32) || mouseIsPressed) && pl.y <= 0) player.shoot();
 
-  redd.render();
-  redd.move();
-  if (redd.dead(pl)) {
+  ufo.render();
+  ufo.move();
+  if (ufo.dead(pl)) {
     sounds[1].play();
-    redd.x = ran(-1000, width + 100);
+    ufo.x = ran(-1000, width + 100);
     player.charge();
-  } else if (redd.x > width + 2000) {
-    redd.x = ran(-100, width + 100);
-    redd.speed = -redd.speed;
-  } else if (redd.x < -2000) {
-    redd.x = ran(-100, width + 100);
-    redd.speed = -redd.speed;
+  } else if (ufo.x > width + 2000) {
+    ufo.x = ran(-100, width + 100);
+    ufo.speed = -ufo.speed;
+  } else if (ufo.x < -2000) {
+    ufo.x = ran(-100, width + 100);
+    ufo.speed = -ufo.speed;
   }
 
   edge = false;
@@ -133,9 +154,9 @@ function playScreen() {
   }
 
   if (pl.dead(el)) {
-    player.charge();
     el.x = 0;
     el.y = 0;
+    player.charge();
   }
 
   // If player dies, then display lose screen
@@ -144,37 +165,11 @@ function playScreen() {
     state = loseScreen;
   }
 
-
   // If total is equal to size of array, then all enemies have died
   // If all enemies are dead, display win screen
-  if (total === 0) state = winScreen;
-}
-
-function titleScreen() {
-  textSize(60);
-  fill("lime");
-  text("SPACE INVADERS", width / 2, height / 2 - 20);
-  textSize(30);
-  fill("white");
-  text("Press ENTER to start", width / 2, height / 2 + 50);
-}
-
-function loseScreen() {
-  textSize(60);
-  fill("red");
-  text("GAME OVER", width / 2, height / 2 - 20);
-  textSize(30);
-  fill("white");
-  text("Press ENTER to restart", width / 2, height / 2 + 50);
-}
-
-function winScreen() {
-  textSize(60);
-  fill("lime");
-  text("YOU WIN!", width / 2, height / 2 - 20);
-  textSize(30);
-  fill("white");
-  text("Press ENTER to restart", width / 2, height / 2 + 50);
+  if (total === 0) {
+    state = winScreen;
+  }
 }
 
 function timer() {

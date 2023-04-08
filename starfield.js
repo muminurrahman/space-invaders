@@ -1,17 +1,19 @@
 class Starfield {
   constructor() {
-    this.arr = [];
+    this.arr = new Array(600);
+    this.r = 0.8;
 
-    this.createStars = function (length) {
-      for (let i = 0; i < length; i++) {
+    this.generateStars = function () {
+      for (let i = 0; i < this.arr.length; i++) {
         this.arr[i] = int(random(width));
       }
     }
 
-    this.render = function (r) {
+    this.render = function () {
       for (let j = 0; j < this.arr.length; j++) {
-        fill("white");
-        ellipse(this.arr[j], this.arr[this.arr.length - j], r, r);
+        //fill("white");
+        if(j % 2 === 0) this.r = .9; else this.r = 1.6;
+        ellipse(this.arr[j], this.arr[this.arr.length - j], this.r, this.r);
       }
     }
   }
